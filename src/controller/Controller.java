@@ -10,7 +10,10 @@ import javafx.scene.text.Font;
 import model.Team;
 import model.Teenopoly;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Optional;
+import java.util.Scanner;
 
 public class Controller {
     @FXML private GridPane gridPane;
@@ -21,9 +24,6 @@ public class Controller {
     private int row = 0;
     @FXML
     private CheckMenuItem autoSave;
-    @FXML
-    private MenuItem grafiekOpenen;
-
     private Teenopoly teenopoly = new Teenopoly();
 
     public void handleEport(ActionEvent actionEvent) {
@@ -40,6 +40,35 @@ public class Controller {
     }
 
     public void handleCopyRight(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Copyright");
+        alert.setHeaderText("Copyright");
+        alert.setResizable(true);
+        alert.getDialogPane().setPrefSize(500, 400);
+        String text = "";
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(new File("src/media/LICENSE.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            while (scanner.hasNextLine()){
+                text+= scanner.nextLine() + "\n";
+
+            }
+        }
+        finally{
+            scanner.close();
+        }
+        TextArea textArea = new TextArea(text);
+        textArea.setEditable(false);
+        textArea.setWrapText(false);
+        alert.getDialogPane().setContent(textArea);
+
+
+
+        alert.showAndWait();
     }
 
     public void handleSettings(ActionEvent actionEvent) {
