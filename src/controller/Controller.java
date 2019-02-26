@@ -1,12 +1,16 @@
 package controller;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
+import javafx.util.Pair;
 import model.Team;
 import model.Teenopoly;
 
@@ -26,6 +30,10 @@ public class Controller {
     private CheckMenuItem autoSave;
     private Teenopoly teenopoly = new Teenopoly();
 
+    public Teenopoly getTeenopoly(){
+        return teenopoly;
+    }
+
     public void handleEport(ActionEvent actionEvent) {
     }
 
@@ -41,7 +49,7 @@ public class Controller {
         alert.setTitle("License");
         alert.setHeaderText("License");
         alert.setResizable(true);
-        alert.getDialogPane().setPrefSize(700, 400);
+        alert.getDialogPane().setPrefSize(630, 400);
         String text = "";
         Scanner scanner = null;
         try {
@@ -94,13 +102,75 @@ public class Controller {
         textArea.setEditable(false);
         textArea.setWrapText(false);
         alert.getDialogPane().setContent(textArea);
-
-
-
         alert.showAndWait();
     }
-
+    @FXML
     public void handleSettings(ActionEvent actionEvent) {
+        // Create the custom dialog.
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Settings Dialog");
+        dialog.setHeaderText("Settings Teenopoly");
+
+        // Set the button types.
+        ButtonType loginButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+
+        // Create the username and defTime labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField numbTeams = new TextField();
+        numbTeams.setText(getTeenopoly().getMaxNumbTeams() + "");
+        TextField defTime = new TextField();
+        defTime.setText(getTeenopoly().getDef_seconds()+"");
+
+        grid.add(new Label("Number of teams:"), 0, 0);
+        grid.add(numbTeams, 1, 0);
+        grid.add(new Label("default time (sec):"), 0, 1);
+        grid.add(defTime, 1, 1);
+
+        // Enable/Disable login button depending on whether a username was entered.
+        Node saveButton = dialog.getDialogPane().lookupButton(loginButtonType);
+
+        // Do some validation (using the Java 8 lambda syntax).
+        numbTeams.textProperty().addListener((observable, oldValue, newValue) -> {
+            try{
+                Integer.parseInt(newValue);
+                saveButton.setDisable(false);
+            }catch (NumberFormatException e){
+                saveButton.setDisable(true);
+            }
+        });
+        defTime.textProperty().addListener((observable, oldValue, newValue) -> {
+            try{
+                Integer.parseInt(newValue);
+                saveButton.setDisable(false);
+            }catch (NumberFormatException e){
+                saveButton.setDisable(true);
+            }
+        });
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Request focus on the username field by default.
+        Platform.runLater(() -> numbTeams.requestFocus());
+
+        // Convert the result to a username-defTime-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == loginButtonType) {
+                return new Pair<>(numbTeams.getText(), defTime.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(usernamePassword -> {
+            teenopoly.saveNumbTeams(usernamePassword.getKey());
+            teenopoly.saveDef_seconds(usernamePassword.getValue());
+        });
     }
     @FXML
     public void handleAddTeam(ActionEvent actionEvent) {
@@ -116,7 +186,6 @@ public class Controller {
         if (result.isPresent()){
             teenopoly.createTeam(result.get());
             addTeamToBoard(teenopoly.getTeam(result.get()));
-
         }
     }
 

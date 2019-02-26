@@ -10,6 +10,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import com.sun.javafx.scene.control.skin.ContextMenuContent.ArrowMenuItem?>
 <Pane xmlns:fx="http://javafx.com/fxml/1" fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0"
       xmlns="http://javafx.com/javafx/8.0.76-ea" fx:controller="controller.Controller">
@@ -37,12 +38,14 @@
                 </graphic>
             </MenuItem>
         </Menu>
-        <Menu mnemonicParsing="false" text="Settings" onAction="#handleSettings">
-            <graphic>
-                <ImageView fitHeight="20" preserveRatio="true">
-                    <Image url="@/media/settings.png"/>
-                </ImageView>
-            </graphic>
+        <Menu mnemonicParsing="false" text="Settings">
+            <MenuItem onAction="#handleSettings" mnemonicParsing="false" text="General">
+                <graphic>
+                    <ImageView fitHeight="20" preserveRatio="true">
+                        <Image url="@/media/settings.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
         </Menu>
         <Menu mnemonicParsing="false" text="Team">
             <MenuItem mnemonicParsing="false" text="Add Team" onAction="#handleAddTeam">
