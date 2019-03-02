@@ -7,13 +7,23 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.util.Pair;
 import model.Team;
 import model.Teenopoly;
 
+import javafx.scene.control.*;
+
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Optional;
@@ -126,10 +136,16 @@ public class Controller {
         TextField defTime = new TextField();
         defTime.setText(getTeenopoly().getDef_seconds()+"");
 
-        grid.add(new Label("Number of teams:"), 0, 0);
+        CheckBox autoSave = new CheckBox("Autosave");
+
+        HBox hbox = new HBox(autoSave);
+        autoSave.setSelected(getTeenopoly().getAutosave());
+
+        grid.add(new Label("Max number of teams:"), 0, 0);
         grid.add(numbTeams, 1, 0);
         grid.add(new Label("default time (sec):"), 0, 1);
         grid.add(defTime, 1, 1);
+        grid.add(hbox,0,2);
 
         // Enable/Disable login button depending on whether a username was entered.
         Node saveButton = dialog.getDialogPane().lookupButton(loginButtonType);
@@ -170,6 +186,7 @@ public class Controller {
         result.ifPresent(usernamePassword -> {
             teenopoly.saveNumbTeams(usernamePassword.getKey());
             teenopoly.saveDef_seconds(usernamePassword.getValue());
+            teenopoly.saveAutosave(autoSave.isSelected());
         });
     }
     @FXML
