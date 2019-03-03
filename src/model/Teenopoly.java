@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class Teenopoly {
 
-    private HashMap<String,Team> teams = new HashMap<>();
+    private HashMap<Integer,Team> teams = new HashMap<>();
     private Properties properties = new Properties();
     private int maxNumbTeams;
     private int def_seconds;
@@ -64,26 +64,27 @@ public class Teenopoly {
 
 
     public void createTeam(String name) {
-        teams.put(name,new Team(name));
+        teams.put(teams.size(),new Team(name,getDef_seconds(),teams.size()));
     }
 
-    public HashMap<String, Team> getTeams() {
+    public HashMap<Integer, Team> getTeams() {
         return teams;
     }
 
-    public void setTeams(HashMap<String, Team> teams) {
+    public void setTeams(HashMap<Integer, Team> teams) {
         if(teams == null){
             throw new IllegalArgumentException("A team can't be null.");
         }
         this.teams = teams;
     }
 
-    public Team getTeam(String name) {
-        if(teams.containsKey(name)){
-            return teams.get(name);
-        }else{
-            throw new IllegalArgumentException("Team doesn't exists.");
+    public Team getTeam(String id) {
+        for(Team t : teams.values()){
+            if(t.getName().equals(id)){
+                return t;
+            }
         }
+        return null;
         //TODO show error team exists
     }
 
@@ -91,5 +92,15 @@ public class Teenopoly {
         this.autosave = selected;
         properties.setProperty("autosave",selected + "");
         savePropertiesFile();
+    }
+
+    public boolean notReachedMaximumNumbOfTeams() {
+        if(teams.size() < getMaxNumbTeams()){
+            return true;
+        }return false;
+    }
+
+    public void addTeam(Team team) {
+        teams.put(team.getId(),team);
     }
 }

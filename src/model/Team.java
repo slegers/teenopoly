@@ -4,8 +4,26 @@ public class Team {
 
     private String name;
     private int s;
-    public Team(String name) {
+    private int id;
+
+    public int getId(){
+        return id;
+    }
+
+    public void setId(int id){
+        if(id < 0){
+            throw new IllegalArgumentException("The id of a team can't be null.");
+        }
+        this.id = id;
+    }
+    public Team(String name,int time,int id) {
         setName(name);
+        setTime(time);
+        setId(id);
+    }
+
+    public void setTime(int time) {
+        this.s = time;
     }
 
     public String getName(){
@@ -23,7 +41,12 @@ public class Team {
         return s;
     }
 
-    public void verhoogAantal() {
-        s+=60;
+    public void verhoogAantal(int aantal) {
+        if(s+aantal < 0){
+            s = 0;
+        }else{
+            s+=aantal;
+        }
+
     }
 }
